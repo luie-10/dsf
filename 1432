@@ -1,0 +1,79 @@
+import pygame # 파이게임을 사용하기 위해서 import 함
+print("Start Up") # 실행 확인용 출력
+
+pygame.init() # 파이게임 내부 모듈 초기화 (항상 먼저 호출해야함)
+pygame.key.set_repeat(500, 500) # 키보드 반응 대기 시간
+# 처음 키보드 입력 후 500ms 대기, 이후 500ms 간격으로 키 입력 확인
+
+# 가로 640, 세로 480 픽셀 크기의 게임 창을 생성
+surface = pygame.display.set_mode((640, 480))
+# 게임의 초당 프레임 수를 조절하기 위한 시계 객체 생성
+clock = pygame.time.Clock()
+
+class Fighter:
+    def __init__(self): #파이터 클래스를 만들 때 초기화 작업
+        # 비행기 이미지 변수, 경로에 따라 실행 위치를 옮겨야 함
+        image = pygame.image.load("assets/images/fighter.png")
+         # 이미지 크기 변경
+        self.scale_up_image = pygame.transform.scale(
+        image, # 어느 이미지를 변경할 것인지
+       (image.get_width() * 2, image.get_height() * 2) # 어느 수치만큼 늘릴 것인지
+        )
+        # 이미지 위치 조정
+             # 맵 가로 중앙 - 이미지의 가로 중앙점
+        self.x = (640 / 2) - (self.scale_up_image.get_width() / 2)
+             # 맵 세로 - 이미지의 세로 크기 - 여백
+        self.y = 480 - self.scale_up_image.get_height() - 10
+    def draw(self, suface):
+        suface.blit(self.scale_up_image, (self.x,self.y))
+
+fighter = Fighter()
+
+
+alien_image = pygame.image.load("assets/images/alien1.png")
+scale_up_alien_image = pygame.transform.scale(
+    alien_image,
+    (alien_image.get_width() * 2, alien_image.get_height() * 2)
+
+)
+
+alien_x = 70
+alien_y = 100
+
+alien_pos = [
+    (70, 100),(70+50,100), (70+50*2,100),(70+50*3,100),
+    (70, 100+70),(70+50,100+70), (70+50*2,100+70),(70+50*3,100+70),
+    (70, 100+70 *2),(70+50,100+70 *2), (70+50*2,100+70 *2),(70+50*3,100+70 *2)
+]
+
+
+
+# 메인 게임 루프
+while True:
+    print("Update") # 루프가 정상적으로 돌아가는지 확인
+    # 사용자의 입력을 받아 처리하는 코드
+    for event in pygame.event.get():
+        # 만약 발생한 이벤트가 'QUIT'(창 종료) 였다면
+        if event.type == pygame.QUIT:
+            print("Shutdown")
+            pygame.quit() # 파이게임 모듈 안전하게 종료
+            exit() # 파이썬 프로그램 종료
+            break # 위에서 exit()만나기 때문에 break가 실행될 일은 없음
+
+    print("Render") # 화면 그리기 출력
+
+    surface.fill((0, 0, 0)) # RGB값으로 채운다.
+    # x좌표 10, y좌표 10에서 가로 100, 세로 100 크기의 RGB값의 사각형을 그린다.
+    # pygame.draw.rect(surface, (0, 0, 255), (10, 10, 100, 100))
+    # 이미지를 복사해서 붙여넣는 기능, 이미지를 (x, y)좌표에 붙여 넣는다.
+    fighter.draw(surface)
+    surface.blit(scale_up_alien_image, (alien_x,alien_y))
+    
+    for pos in alien_pos : 
+        surface.blit(scale_up_alien_image, pos)
+
+    pygame.display.update() # 화면에 업데이트
+    clock.tick(30)
+
+
+
